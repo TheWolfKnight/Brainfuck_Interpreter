@@ -39,6 +39,7 @@ class Intrp(object):
 		self.buff: list[int] = [ 0 for _ in range(buff_size) ]
 		self.buff_size = buff_size
 		self.action: list[Token] = self._gen_tokens(inpt)
+		self.out: str = ""
 
 	def _gen_tokens(self, inpt: list[chr]) -> list[Token]:
 		"""
@@ -70,18 +71,43 @@ class Intrp(object):
 					raise TokenError(val, i)
 		return r
 
-	def _write_buff(self) -> None:
+	def write_buff(self) -> None:
 		"""
 		Loops over the Tokens and generates the buffer.\n
 		@param self: object\n
 		@return: None
 		"""
-		idx: int = 0
-		while (True):
-			pass
+		action_idx: int = 0
+		buff_idx: int = 0
+		while (action_idx < len(self.action)):
+			token: Tokne = self.action[action_idx]
+			if token == Token.T_incroment:
+				self.buff[buff_idx] += 1
+			elif token == Token.T_decroment:
+				self.buff[buff_idx] -= 1
+			elif token == Token.T_incro_ptr:
+				buff_idx += 1
+			elif token == Token.T_decro_ptr:
+				buff_idx -= 1
+			elif token == Token.T_dump_cptr:
+				self.out += chr(self.buff[buff_idx])
+			elif token == Token.T_getu_inpt:
+				self._get_user_input()
+			elif token == Token.T_strt_loop:
+				strt: int = action_idx
+				end: int = self.action[i:].index(Token.T_stop_loop)
+				action_idx = self._loop(strt, end)
+			action_idx += 1
+		return
 
-	def _loop(self, start_idx: int, stop_idx: int) -> None:
-		pass
+
+	def _get_user_input(self, inpt: int) -> None:
+		u_input: str = input("$ ")
+
+		return
+
+	def _loop(self, start_idx: int, stop_idx: int) -> int:
+		return
 
 	@classmethod
 	def from_string(cls, inpt: str, buff_size: int = 3000) -> None:

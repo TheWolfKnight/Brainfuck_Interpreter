@@ -1,54 +1,68 @@
 from file_hndl import FileHandler
-from intrp import Intrp
 from sys import exit, argv
+from compiler import Compiler
+from intrp import Intrp
 
 
-class InvalidFlag(Exception):
-	def __init__(self, switch: chr=None, length: int=None,
-				 unset_flag: str=None, invalid_respons: str=None):
-		self.switch = switch
-		self.length = length
-		self.unset_flag = unset_flag
-		self.invalid_respons = invalid_respons
-		self.respons: str = self._generate_report()
+GLOB_compile: bool = False
 
-	def _generate_report(self) -> str:
-		r: str = ""
-		match self.switch:
-			case 'l':
-				r = "\nA flag was not set properly" \
-				   f"\nThe length of the arguments were {self.length} expected and even length"
-			case 'u':
-				r = "\nOne of the flags was not set" \
-				   f"\n{self.unset_flag} was not set properly"
-			case 'i':
-				r = "\nA flags value was not as expected" \
-				    f"\n{self.invalid_respons} was not the correct value"
-			case _:
-				raise SyntaxError
-		return r
+
+class FlagError(Exception):
+	def __init__(self, flag: str, response: str):
+		self.flag = flag
+		self.response = response
 
 	def __str__(self) -> str:
-		return self.respons
+		return f""
 
 
-def test_env():
-	obj: FileHandler = FileHandler("./tmp.txt")
-	out: list[chr] = obj.read_file()
-	interp: Intrp = Intrp(out)
-	print(interp.action)
+
+def print_help() -> None:
+	print("Help")
 	return
 
 
-def main():
-	test_env()
+def from_file(file_path: str) -> list[chr]:
+	global GLOB_compile
+	file_handler: FileHandler = FileHandler(file_path)
+	r: list[chr] = file_handler.read_file(GLOB_compile)
+	return r
+
+
+def from_string(inpt: str) -> list[chr]:
+	return [ c for c in inpt ]
+
+
+def to_compiled(inpt: list[chr]) -> list[chr]:
+	r: list[chr] = []
+
+
+def main(argm: dict[str, str]=None):
+	global GLOB_compile
+	inpt: list[chr] = []
+	for key in argm:
+		match key:
+			case ("-c"|"--compile"):
+				# Handles the file by compiling it to brainfuck
+				GLOB_compile = True
+			case ("-f"|"--file"):
+				# Handles an input file
+				idx: int = argm.index('-f') if '-f' in argm else argm.index('--file')
+				inpt = from_file(argm[idx+1])
+			case ("-i"|"--in"):
+				# Handles the case where the user sets the input from terminal
+				idx: int = argm.index('-i') if '-i' in argm else argm.index('--in')
+				inpt = argm[idx+1]
+			case ("-h"|"--help"):
+				# Handles the case where the user needs help
+				print_help()
+			case _:
+				break
+	if (len(argm) < 1):
+		print_help()
 	return
 
 
 if __name__ == "__main__":
-	if (len(argv)-1 % 2):
-		raise InvalidFlag(switch='l', length=len(argv)-1)
-	argm: dict = { argv[i]: argv[i+1] for i in range(1, len(argv[1:]), 2) }
-	print(argm)
-	# main()
+	main(argv[1:])
 	exit()

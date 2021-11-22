@@ -27,10 +27,10 @@ class FileHandler(object):
 		else:
 			raise PathError(file)
 
-	def read_file(self) -> list[chr]:
-		black_list: list[chr] = [ ' ', '\t', '\n' ]
+	def read_file(self, compiler: bool=False) -> list[chr]:
+		black_list: list[chr] = [ ' ', '\t', '\n' ] if not compiler else []
 		r: list[chr] = []
 		with open(self.file, 'r') as r_file:
-			for line in r_file.readline():
-				r += [ c for c in line if c not in black_list ]
+			for line in r_file.readlines():
+					r += [ c for c in line if c not in black_list  ]
 		return r
