@@ -17,7 +17,7 @@ class FlagError(Exception):
 
 
 
-def print_help() -> None:
+def print_help() -> ():
 	print("Help")
 	return
 
@@ -37,7 +37,17 @@ def to_compiled(inpt: list[chr]) -> list[chr]:
 	r: list[chr] = []
 
 
+def test_env():
+	inpt: list[chr] = ['>'] + ['['] + ['+'] * 72 + ['<'] + [']'] + ['.']
+	intrp: Intrp = Intrp(inpt)
+	intrp.write_buff()
+	print(intrp.out)
+
+
 def main(argm: dict[str, str]=None):
+	test_env()
+	return
+
 	global GLOB_compile
 	inpt: list[chr] = []
 	for key in argm:

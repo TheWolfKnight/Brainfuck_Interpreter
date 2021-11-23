@@ -14,7 +14,7 @@ class TokenError(Exception):
 	def __str__(self) -> str:
 		return f"\nAn invalid token was found as position: {self.ptr}" \
 			   f"\nInvalid Token: {self.char}" \
-			   "\nValid Tokens: '+', '-', '[', ']', '.', ','"
+			    "\nValid Tokens: '+', '-', '[', ']', '.', ','"
 
 
 class Token(Enum):
@@ -40,6 +40,8 @@ class Intrp(object):
 		self.buff_size = buff_size
 		self.action: list[Token] = self._gen_tokens(inpt)
 		self.out: str = ""
+		self.action_idx: int = 0
+		self.buff_idx: int = 0
 
 	def _gen_tokens(self, inpt: list[chr]) -> list[Token]:
 		"""
@@ -71,46 +73,48 @@ class Intrp(object):
 					raise TokenError(val, i)
 		return r
 
+	def _interp_token(self, token: Token) -> None:
+		match token:
+			case Token.T_incroment:
+				self.buff[self.buff_idx] += 1
+			case Token.T_decroment:
+				self.buff[self.buff_idx] -= 1
+			case Token.T_incro_ptr:
+				self.buff_idx += 1
+			case Token.T_decro_ptr:
+				self.buff_idx -= 1
+			case Token.T_dump_cptr:
+				self.out += chr(self.buff[self.buff_idx])
+			case Token.T_getu_inpt:
+				self._get_user_input()
+			case Token.T_strt_loop:
+				strt: int = self.action_idx
+				end: int = self.action[strt:].index(Token.T_stop_loop)
+				self._loop(strt, end)
+				self.action_idx = end+1
+
 	def write_buff(self) -> None:
 		"""
 		Loops over the Tokens and generates the buffer.\n
 		@param self: object\n
 		@return: None
 		"""
-		action_idx: int = 0
-		buff_idx: int = 0
-		while (action_idx < len(self.action)):
-			token: Tokne = self.action[action_idx]
-			if token == Token.T_incroment:
-				self.buff[buff_idx] += 1
-			elif token == Token.T_decroment:
-				self.buff[buff_idx] -= 1
-			elif token == Token.T_incro_ptr:
-				buff_idx += 1
-			elif token == Token.T_decro_ptr:
-				buff_idx -= 1
-			elif token == Token.T_dump_cptr:
-				self.out += chr(self.buff[buff_idx])
-			elif token == Token.T_getu_inpt:
-				self._get_user_input()
-			elif token == Token.T_strt_loop:
-				strt: int = action_idx
-				end: int = self.action[i:].index(Token.T_stop_loop)
-				action_idx = self._loop(strt, end)
-			action_idx += 1
+		while (self.action_idx < len(self.action)):
+			token: Tokne = self.action[self.action_idx]
+			self._interp_token(token)
+			self.action_idx += 1
 		return
 
-
-	def _get_user_input(self, inpt: int) -> None:
+	def _get_user_input(self, inpt: int) -> ():
 		u_input: str = input("$ ")
 
 		return
 
-	def _loop(self, start_idx: int, stop_idx: int) -> int:
+	def _loop(self, start_idx: int, stop_idx: int) -> ():
 		return
 
 	@classmethod
-	def from_string(cls, inpt: str, buff_size: int = 3000) -> None:
+	def from_string(cls, inpt: str, buff_size: int = 3000) -> ():
 		h: list[chr] = [ c for c in inpt ]
 		r: object = cls(inpt, buff_size)
 		return r
