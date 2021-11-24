@@ -110,7 +110,7 @@ class Intrp(object):
 			self.action_idx += 1
 		return
 
-	def _get_user_input(self, inpt: int) -> ():
+	def _get_user_input(self) -> ():
 		u_input: str = input("$ ")
 		assert len(u_input) == 1, "Can only accept one char at a time."
 		self.buff[self.buff_idx] = ord(u_input) 
