@@ -112,7 +112,8 @@ class Intrp(object):
 
 	def _get_user_input(self, inpt: int) -> ():
 		u_input: str = input("$ ")
-
+		assert len(u_input) == 1, "Can only accept one char at a time."
+		self.buff[self.buff_idx] = ord(u_input) 
 		return
 
 	def _loop(self, start_idx: int, stop_idx: int) -> ():
