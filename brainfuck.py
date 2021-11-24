@@ -1,6 +1,5 @@
 from file_hndl import FileHandler
 from sys import exit, argv
-from compiler import Compiler
 from intrp import Intrp
 
 
