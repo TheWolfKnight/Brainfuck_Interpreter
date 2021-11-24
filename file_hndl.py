@@ -21,16 +21,22 @@ class FileHandler(object):
 	@param self: object\n
 	@param file: str
 	"""
-	def __init__(self, file: str):
-		if (isfile(file)):
-			self.file = file
-		else:
-			raise PathError(file)
-
-	def read_file(self, compiler: bool=False) -> list[chr]:
-		black_list: list[chr] = [ ' ', '\t', '\n' ] if not compiler else []
+	def read_file(self, file_name: str) -> list[chr]:
+		if not isfile(file_name):
+			raise PathError(file_name)
+		black_list: list[chr] = [ ' ', '\t', '\n' ]
 		r: list[chr] = []
-		with open(self.file, 'r') as r_file:
+		with open(file_name, 'r') as r_file:
 			for line in r_file.readlines():
 					r += [ c for c in line if c not in black_list  ]
 		return r
+
+	def write_file(self, file_name: str, inpt: str) -> ():
+		if isfile(file_name):
+			print("This file already exist.\nDo you want to overwrite it?\n")
+			uInput = input("[y/N]: ")
+			if uInput.lower() == 'n' or not uInput:
+				raise PathError(file_name)
+		with open(file_name, 'w') as w_file:
+			w_file.write(inpt)
+		return

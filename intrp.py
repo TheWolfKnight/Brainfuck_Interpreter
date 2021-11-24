@@ -74,22 +74,18 @@ class Intrp(object):
 					raise TokenError(val, i)
 		return r
 
-	def _interp_token(self, token: Token, tmp_idx: int) -> None:
+	def _interp_token(self, token: Token) -> None:
 		match token:
 			case Token.T_incroment:
 				self.buff[self.buff_idx] += 1
-				print(f"{tmp_idx=}; \"incro buff\"; {self.buff[self.buff_idx]=}; {self.buff_idx=}")
 			case Token.T_decroment:
 				self.buff[self.buff_idx] -= 1
-				print(f"{tmp_idx=}; \"decro buff\"; {self.buff[self.buff_idx]=}; {self.buff_idx=}")
 			case Token.T_incro_ptr:
 				self.buff_idx += 1
-				print(f"{tmp_idx=}; \"incro buff idx\"; {self.buff[self.buff_idx]=}; {self.buff_idx=}")
 				if self.buff_idx > self.buff_size:
 					raise IndexError
 			case Token.T_decro_ptr:
 				self.buff_idx -= 1
-				print(f"{tmp_idx=}; \"decro buff idx\"; {self.buff[self.buff_idx]=}; {self.buff_idx=}")
 				if self.buff_idx < 0:
 					raise IndexError
 			case Token.T_dump_cptr:
@@ -99,11 +95,8 @@ class Intrp(object):
 			case Token.T_strt_loop:
 				strt: int = self.action_idx
 				end: int = self.action[strt:].index(Token.T_stop_loop)
-				print(f"{tmp_idx=}; \"start loop\"; {self.buff[self.buff_idx]=}; {self.buff_idx=}")
 				self._loop(strt, end)
-				print(f"{tmp_idx=}; \"end loop\"; {self.buff[self.buff_idx]=}; {self.buff_idx=}")
-				# print(strt + end + 1)
-				self.action_idx = strt + end + 1
+				self.action_idx = strt + end
 
 	def write_buff(self) -> None:
 		"""
@@ -113,7 +106,7 @@ class Intrp(object):
 		"""
 		while (self.action_idx < len(self.action)):
 			token: Tokne = self.action[self.action_idx]
-			self._interp_token(token, self.action_idx)
+			self._interp_token(token)
 			self.action_idx += 1
 		return
 
@@ -126,7 +119,7 @@ class Intrp(object):
 		while (self.buff[self.buff_idx]):
 			for i in range(1, stop_idx+1, 1):
 				local_action_idx: int = self.action_idx + i
-				self._interp_token(self.action[local_action_idx], local_action_idx)
+				self._interp_token(self.action[local_action_idx])
 		return
 
 	@classmethod

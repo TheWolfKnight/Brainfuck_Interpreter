@@ -4,9 +4,6 @@ from compiler import Compiler
 from intrp import Intrp
 
 
-GLOB_compile: bool = False
-
-
 class FlagError(Exception):
 	def __init__(self, flag: str, response: str):
 		self.flag = flag
@@ -16,50 +13,55 @@ class FlagError(Exception):
 		return f""
 
 
-
 def print_help() -> ():
-	print("Help")
+	hlp_msg: str = """
+-f|--file:		Use: -f {file name}, gets input from the given file. Should not be used with "-i"
+-o|--output:		Use: -o {file name}, writes the output to the given file, can be used with "-s"
+-s|--silent:		Use: -s, stops the program from writing to stdout, can be used with "-o"
+-i|--in:		Use: -i {input}, takes the input from stdin and use it for the interpretaiton.\n\t\t\t\t\t Should not be used with "-f"
+-h|--help:		Use: -h, will show this message again.
+	"""
+	print(hlp_msg)
 	return
 
 
 def from_file(file_path: str) -> list[chr]:
-	global GLOB_compile
-	file_handler: FileHandler = FileHandler(file_path)
-	r: list[chr] = file_handler.read_file(GLOB_compile)
+	file_handler: FileHandler = FileHandler()
+	r: list[chr] = file_handler.read_file(file_path)
 	return r
+
+
+def write_output(file_path: str, inpt: str) -> ():
+	file_handler: FileHandler = FileHandler()
+	file_handler.write_file(file_path, inpt)
+	print(f"Wrote file {file_path}")
+	return
 
 
 def from_string(inpt: str) -> list[chr]:
 	return [ c for c in inpt ]
 
 
-def to_compiled(inpt: list[chr]) -> list[chr]:
-	r: list[chr] = []
-
-
-def test_env():
-	inpt: list[chr] = [ c for c in "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>." ]
-	intrp: Intrp = Intrp(inpt)
-	intrp.write_buff()
-	# print(intrp.buff)
-	print(intrp.out)
-
-
 def main(argm: dict[str, str]=None):
-	test_env()
-	return
-
-	global GLOB_compile
 	inpt: list[chr] = []
+
+	silent: bool = 0
+	out_file: str = ""
+
+	if (len(argm) < 1):
+		print_help()
+
 	for key in argm:
-		match key:
-			case ("-c"|"--compile"):
-				# Handles the file by compiling it to brainfuck
-				GLOB_compile = True
+		match key.lower():
 			case ("-f"|"--file"):
 				# Handles an input file
 				idx: int = argm.index('-f') if '-f' in argm else argm.index('--file')
 				inpt = from_file(argm[idx+1])
+			case ("-o"|"--output"):
+				idx: int = argm.index('-o') if '-o' in argm else argm.index('--output')
+				out_file = argm[idx+1]
+			case ("-s"|"--silent"):
+				silent = 1
 			case ("-i"|"--in"):
 				# Handles the case where the user sets the input from terminal
 				idx: int = argm.index('-i') if '-i' in argm else argm.index('--in')
@@ -68,9 +70,17 @@ def main(argm: dict[str, str]=None):
 				# Handles the case where the user needs help
 				print_help()
 			case _:
-				break
-	if (len(argm) < 1):
-		print_help()
+				pass
+
+	intrp: Intrp = Intrp(inpt)
+	intrp.write_buff()
+
+	if (out_file):
+		write_output(out_file, intrp.out)
+
+	if (not silent):
+		print("Output:", intrp.out)
+
 	return
 
 
