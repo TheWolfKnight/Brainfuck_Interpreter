@@ -74,7 +74,7 @@ class Intrp(object):
 					raise TokenError(val, i)
 		return r
 
-	def _interp_token(self, token: Token) -> None:
+	def _interp_token(self, token: Token) -> ():
 		match token:
 			case Token.T_incroment:
 				self.buff[self.buff_idx] += 1
@@ -95,14 +95,14 @@ class Intrp(object):
 			case Token.T_strt_loop:
 				strt: int = self.action_idx
 				end: int = self.action[strt:].index(Token.T_stop_loop)
-				self._loop(strt, end)
+				self._loop(end)
 				self.action_idx = strt + end
 
-	def write_buff(self) -> None:
+	def write_buff(self) -> ():
 		"""
 		Loops over the Tokens and generates the buffer.\n
-		@param self: object\n
-		@return: None
+		@param self: 	object\n
+		@return: 		None
 		"""
 		while (self.action_idx < len(self.action)):
 			token: Tokne = self.action[self.action_idx]
@@ -116,15 +116,9 @@ class Intrp(object):
 		self.buff[self.buff_idx] = ord(u_input) 
 		return
 
-	def _loop(self, start_idx: int, stop_idx: int) -> ():
+	def _loop(self, stop_idx: int) -> ():
 		while (self.buff[self.buff_idx]):
 			for i in range(1, stop_idx+1, 1):
 				local_action_idx: int = self.action_idx + i
 				self._interp_token(self.action[local_action_idx])
 		return
-
-	@classmethod
-	def from_string(cls, inpt: str, buff_size: int = 3000) -> ():
-		h: list[chr] = [ c for c in inpt ]
-		r: object = cls(inpt, buff_size)
-		return r
