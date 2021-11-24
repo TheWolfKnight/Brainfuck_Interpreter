@@ -1,9 +1,16 @@
 from enum import Enum, auto
+from time import perf_counter
 from sys import exit
 
 
 if __name__ == "__main__":
 	exit()
+
+
+class TimeOutError(Exception):
+	def __str__(self) -> str:
+		return "\nThe input has timed out." \
+			   "\nThe interpreter will not allow code to run for more then 10 min"
 
 
 class TokenError(Exception):
@@ -111,6 +118,13 @@ class Intrp(object):
 		return
 
 	def _loop(self, start_idx: int, stop_idx: int) -> ():
+		timeOut_counter = perf_counter()
+		while (self.buff[self.buff_idx]):
+			for i in range(1, stop_idx):
+				local_action_idx: int = self.action_idx + i
+				self._interp_token(self.action[local_action_idx])
+			if (perf_counter() - timeOut_counter > 10.):
+				raise TimeOutError()
 		return
 
 	@classmethod

@@ -38,7 +38,7 @@ def to_compiled(inpt: list[chr]) -> list[chr]:
 
 
 def test_env():
-	inpt: list[chr] = ['>'] + ['['] + ['+'] * 72 + ['<'] + [']'] + ['.']
+	inpt: list[chr] = ['+'] + ['['] + ['+'] * 71 + ['>'] + [']'] + ['<'] + ['.']
 	intrp: Intrp = Intrp(inpt)
 	intrp.write_buff()
 	print(intrp.out)
