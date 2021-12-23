@@ -1,5 +1,5 @@
 __pycache__/
-/tmp.txt
+/tmp*.txt
 /test.txt
 /dump.txt
 /run.bat
