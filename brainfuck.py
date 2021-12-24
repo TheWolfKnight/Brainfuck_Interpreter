@@ -1,7 +1,5 @@
 from file_hndl import FileHandler
 from sys import argv, stdout
-from error import FlagError
-from fnmatch import filter
 from intrp import Intrp
 
 
@@ -45,14 +43,7 @@ def main(argm: dict[str, str]=None):
     if (len(argm) < 1):
         print_help()
 
-    accepted_argvs: list[str] = ["-f", "--file", "-s", "--silent", "-i",
-                                 "--in", "-h", "--help"]
-
     for key in argm:
-        if key.startswith('-') or key.startswith('--') \
-           and key.lower() not in accepted_argvs:
-            raise FlagError(key)
-
         match key.lower():
             case ("-f"|"--file"):
                 # Handles an input file
@@ -80,7 +71,7 @@ def main(argm: dict[str, str]=None):
         write_output(out_file, intrp.out)
 
     if (not silent):
-        stdout.write("Output:", intrp.out)
+        stdout.write(f"Output: {intrp.out}")
         stdout.flush()
 
     return

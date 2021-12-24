@@ -4,15 +4,6 @@ if __name__ == "__main__":
     exit()
 
 
-class FlagError(Exception):
-    def __init__(self, flag: str):
-        self.flag = flag
-
-    def __str__(self) -> str:
-        return f"\nA unrecignised flag was found in the input" \
-               f"\n\"{self.flag}\" is not a recignised flag."
-
-
 class PathError(Exception):
     def __init__(self, file: str):
         self.file = file
