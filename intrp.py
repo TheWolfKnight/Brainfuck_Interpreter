@@ -100,11 +100,9 @@ class Intrp(object):
                     break
             if end == None:
                 raise UnclosedLoopError(start)
-            print(f"{self.action_idx=}, {end=}")
             self._loop(self.action_idx, t.depth)
             self.action_idx = end
         elif tp == T_dump_cptr:
-            print("buff dump hit", self.buff[self.buff_idx])
             self.out += chr(self.buff[self.buff_idx])
         elif tp == T_getu_inpt:
             self._get_user_input()
@@ -117,8 +115,6 @@ class Intrp(object):
         @return: 		None
         """
         while self.action_idx < len(self.action):
-            print(f"[{self.action_idx=}, {self.action[self.action_idx]=}" \
-                  f" {self.buff_idx=}, {self.buff[self.buff_idx]=}]")
             token: BaseToken = self.action[self.action_idx]
             self._interp_token(token)
             self.action_idx += 1
@@ -131,13 +127,9 @@ class Intrp(object):
         return
 
     def _loop(self, start_idx: int, end_depth: int) -> None:
-
         self.action_idx += 1
-
         while True:
             self._interp_token(self.action[self.action_idx])
-            print(f"[{self.action_idx=}, {self.action[self.action_idx]=}" \
-                  f" {self.buff_idx=}, {self.buff[self.buff_idx]=}")
             if type(self.action[self.action_idx]) == T_stop_loop \
                and self.action[self.action_idx].depth == end_depth:
                 if not self.buff[self.buff_idx]:
@@ -145,11 +137,4 @@ class Intrp(object):
                 self.action_idx = start_idx
             else:
                 self.action_idx += 1
-
-        # while self.buff[self.buff_idx]:
-        #     for i in range(1, stop_idx+1, 1):
-        #         locale_action_idx: int = self.action_idx + i
-        #         print(f"[{locale_action_idx=}, {self.action[locale_action_idx]=}" \
-        #               f" {self.buff_idx=}, {self.buff[self.buff_idx]=}")
-        #         self._interp_token(self.action[locale_action_idx])
         return
