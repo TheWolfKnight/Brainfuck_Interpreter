@@ -1,15 +1,8 @@
 from file_hndl import FileHandler
-from sys import exit, argv
+from sys import argv, stdout
+from error import FlagError
+from fnmatch import filter
 from intrp import Intrp
-
-
-class FlagError(Exception):
-    def __init__(self, flag: str, response: str):
-        self.flag = flag
-        self.response = response
-
-    def __str__(self) -> str:
-        return f""
 
 
 def print_help() -> None:
@@ -20,7 +13,8 @@ def print_help() -> None:
 -i|--in:		Use: -i {input}, takes the input from stdin and use it for the interpretaiton.\n\t\t\t\t\t Should not be used with "-f"
 -h|--help:		Use: -h, will show this message again.
     """
-    print(hlp_msg)
+    stdout.write(hlp_msg)
+    stdout.flush()
     return
 
 
@@ -33,7 +27,8 @@ def from_file(file_path: str) -> list[chr]:
 def write_output(file_path: str, inpt: str) -> None:
     file_handler: FileHandler = FileHandler()
     file_handler.write_file(file_path, inpt)
-    print(f"Wrote file {file_path}")
+    stdout.write(f"Wrote file {file_path}")
+    stdout.flush()
     return
 
 
@@ -50,7 +45,14 @@ def main(argm: dict[str, str]=None):
     if (len(argm) < 1):
         print_help()
 
+    accepted_argvs: list[str] = ["-f", "--file", "-s", "--silent", "-i",
+                                 "--in", "-h", "--help"]
+
     for key in argm:
+        if key.startswith('-') or key.startswith('--') \
+           and key.lower() not in accepted_argvs:
+            raise FlagError(key)
+
         match key.lower():
             case ("-f"|"--file"):
                 # Handles an input file
@@ -78,7 +80,8 @@ def main(argm: dict[str, str]=None):
         write_output(out_file, intrp.out)
 
     if (not silent):
-        print("Output:", intrp.out)
+        stdout.write("Output:", intrp.out)
+        stdout.flush()
 
     return
 
