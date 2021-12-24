@@ -9,8 +9,6 @@ if __name__ == "__main__":
 class FileHandler(object):
     """
     An object to handle the reading of files, and subsequent pasing of data to the Intrp object\n
-    @param self: object\n
-    @param file: str
     """
     @staticmethod
     def read_file(file_name: str) -> list[chr]:
