@@ -4,8 +4,7 @@ from intrp import Intrp
 
 
 def print_help() -> None:
-    hlp_msg: str = """
--f|--file:		Use: -f {file name}, gets input from the given file. Should not be used with "-i"
+    hlp_msg: str = """-f|--file:		Use: -f {file name}, gets input from the given file. Should not be used with "-i"
 -o|--output:		Use: -o {file name}, writes the output to the given file, can be used with "-s"
 -s|--silent:		Use: -s, stops the program from writing to stdout, can be used with "-o"
 -i|--in:		Use: -i {input}, takes the input from stdin and use it for the interpretaiton.\n\t\t\t\t\t Should not be used with "-f"
@@ -42,6 +41,7 @@ def main(argm: dict[str, str]=None):
 
     if (len(argm) < 1):
         print_help()
+        exit(2)
 
     for key in argm:
         match key.lower():

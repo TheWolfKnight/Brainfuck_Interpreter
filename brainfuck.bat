@@ -1,1 +1,4 @@
-python brainfuck.py %*
+@echo off
+set route=%~dp0
+
+python %route%/brainfuck.py %*
