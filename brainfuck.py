@@ -30,7 +30,7 @@ def write_output(file_path: str, inpt: str) -> None:
 
 
 def from_string(inpt: str) -> list[chr]:
-    return [ c for c in inpt ]
+    return [ c for c in inpt if c in "+-[]<>" ]
 
 
 def main(argm: dict[str, str]=None):
